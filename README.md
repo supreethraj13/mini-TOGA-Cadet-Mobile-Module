@@ -37,13 +37,21 @@ and `python -m uvicorn backend.main:app --reload --port 8000`.
 
 Use `POST /auth/login`, then pass `Authorization: Bearer mock.jwt.cadet-arjun-menon`.
 
+The Flutter app now calls the FastAPI server directly. Start the backend before logging in. For desktop/web runs the default base URL is `http://127.0.0.1:8000`. For Android emulator use:
+
+```bash
+flutter run --dart-define=TOGA_API_BASE_URL=http://10.0.2.2:8000
+```
+
+For a physical device, replace the host with your computer LAN IP.
+
 ## Structure
 
 `lib/core` contains theme, error handling, mock data, and storage. `lib/features/*` owns feature models, data repositories/services, Cubits, and screens. `lib/shared` contains reusable aviation UI components.
 
-## Mock Data
+## API Data
 
-Mock cadet data comes from the assessment PDF: Arjun Menon, PPL, AIRMAN Flight Academy, Capt. R. Sharma, Chennai, study subjects, logbook summary, and TOGA notifications.
+Cadet data comes from the FastAPI mock backend: Arjun Menon, PPL, AIRMAN Flight Academy, Capt. R. Sharma, Chennai, study subjects, logbook summary, and TOGA notifications. If the API is offline the Flutter app shows error states instead of falling back to local mock data.
 
 ## Local Storage
 

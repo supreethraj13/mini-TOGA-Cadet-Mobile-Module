@@ -40,12 +40,12 @@ class _LogbookScreenState extends State<LogbookScreen> {
               physics: const NeverScrollableScrollPhysics(),
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 1.45,
+              childAspectRatio: MediaQuery.sizeOf(context).width > 600 ? 1.55 : 1.25,
               children: [
-                _MetricCard(label: 'Total', value: '${summary.totalHours.toStringAsFixed(1)} h'),
-                _MetricCard(label: 'Dual', value: '${summary.dualHours.toStringAsFixed(1)} h'),
-                _MetricCard(label: 'Solo', value: '${summary.soloHours.toStringAsFixed(1)} h'),
-                _MetricCard(label: 'Last', value: summary.lastFlight),
+                _MetricCard(label: 'Total Flight Hours', value: '${summary.totalHours.toStringAsFixed(1)} h'),
+                _MetricCard(label: 'Solo Hours', value: '${summary.soloHours.toStringAsFixed(1)} h'),
+                _MetricCard(label: 'Dual Hours', value: '${summary.dualHours.toStringAsFixed(1)} h'),
+                _MetricCard(label: 'Last Flight Date', value: summary.lastFlight),
               ],
             ),
             const SizedBox(height: 12),
@@ -72,7 +72,10 @@ class _LogbookScreenState extends State<LogbookScreen> {
                     leading: const Icon(Icons.flight_rounded),
                     title: Text('${entry.aircraft} · ${entry.lesson}'),
                     subtitle: Text('${entry.date} · ${entry.route}'),
-                    trailing: Text('${entry.duration.toStringAsFixed(1)} h'),
+                    trailing: Text(
+                      '${entry.duration.toStringAsFixed(1)} h',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+                    ),
                   ),
                 ),
           ],
@@ -92,14 +95,22 @@ class _MetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(label, style: Theme.of(context).textTheme.labelLarge),
-            const SizedBox(height: 8),
-            Text(value, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              value,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900),
+            ),
           ],
         ),
       ),

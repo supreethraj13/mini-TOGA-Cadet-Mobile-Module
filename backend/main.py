@@ -72,6 +72,72 @@ subjects = [
         "status": "Completed",
         "chapters": [{"id": "reg-1", "chapter": "Rules of the Air", "completed": True}],
     },
+    {
+        "id": "nav",
+        "subject": "Navigation",
+        "progress": 58,
+        "lessons_completed": 14,
+        "total_lessons": 24,
+        "quiz_score": 76,
+        "status": "In Progress",
+        "chapters": [
+            {"id": "nav-1", "chapter": "Dead Reckoning", "completed": True},
+            {"id": "nav-2", "chapter": "VOR Tracking", "completed": True},
+            {"id": "nav-3", "chapter": "Flight Planning", "completed": False},
+        ],
+    },
+    {
+        "id": "tech-gen",
+        "subject": "Technical General",
+        "progress": 35,
+        "lessons_completed": 7,
+        "total_lessons": 20,
+        "quiz_score": 69,
+        "status": "In Progress",
+        "chapters": [
+            {"id": "tg-1", "chapter": "Airframes", "completed": True},
+            {"id": "tg-2", "chapter": "Engines", "completed": False},
+        ],
+    },
+    {
+        "id": "tech-spec",
+        "subject": "Technical Specific",
+        "progress": 0,
+        "lessons_completed": 0,
+        "total_lessons": 16,
+        "quiz_score": 0,
+        "status": "Not Started",
+        "chapters": [
+            {"id": "ts-1", "chapter": "C172 Systems Overview", "completed": False},
+            {"id": "ts-2", "chapter": "Limitations", "completed": False},
+        ],
+    },
+    {
+        "id": "air-nav",
+        "subject": "Air Navigation",
+        "progress": 44,
+        "lessons_completed": 10,
+        "total_lessons": 22,
+        "quiz_score": 73,
+        "status": "In Progress",
+        "chapters": [
+            {"id": "an-1", "chapter": "Charts and Symbols", "completed": True},
+            {"id": "an-2", "chapter": "Wind Triangle", "completed": False},
+        ],
+    },
+    {
+        "id": "rtr",
+        "subject": "RTR / Communication",
+        "progress": 18,
+        "lessons_completed": 3,
+        "total_lessons": 17,
+        "quiz_score": 61,
+        "status": "In Progress",
+        "chapters": [
+            {"id": "rtr-1", "chapter": "Standard Phraseology", "completed": True},
+            {"id": "rtr-2", "chapter": "Emergency Calls", "completed": False},
+        ],
+    },
 ]
 
 logbook = {
