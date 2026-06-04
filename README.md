@@ -52,3 +52,4 @@ Repositories are endpoint-shaped and can swap mock services for real REST client
 
 Add Dio interceptors, secure token storage, typed Hive adapters, background sync, richer widget tests, CI, and generated screenshots/APK.
 # mini-TOGA-Cadet-Mobile-Module
+# mini-TOGA-Cadet-Mobile-Module
