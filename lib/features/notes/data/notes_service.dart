@@ -1,9 +1,19 @@
+import '../../../core/network/api_client.dart';
+
 class NotesService {
-  int _attempt = 0;
+  NotesService(this._apiClient);
+
+  final ApiClient _apiClient;
 
   Future<bool> syncNote(Map<String, dynamic> noteJson) async {
-    await Future<void>.delayed(const Duration(milliseconds: 900));
-    _attempt++;
-    return _attempt % 3 != 1;
+    await _apiClient.postMap(
+      '/toga/study/notes',
+      body: {
+        'subject_id': noteJson['subject_id'],
+        'subject': noteJson['subject'],
+        'body': noteJson['body'],
+      },
+    );
+    return true;
   }
 }

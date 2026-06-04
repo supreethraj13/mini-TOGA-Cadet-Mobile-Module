@@ -1,8 +1,11 @@
-import '../../../core/data/mock_data.dart';
+import '../../../core/network/api_client.dart';
 
 class LogbookService {
+  LogbookService(this._apiClient);
+
+  final ApiClient _apiClient;
+
   Future<Map<String, dynamic>> fetchSummary() async {
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-    return mockLogbookJson;
+    return _apiClient.getMap('/toga/logbook/summary');
   }
 }

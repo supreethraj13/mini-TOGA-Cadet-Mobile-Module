@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/errors/app_bloc_observer.dart';
+import 'core/network/api_client.dart';
 import 'core/storage/local_storage.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/data/auth_repository.dart';
@@ -53,13 +54,21 @@ class _TogaMobileAppState extends State<TogaMobileApp> {
   ThemeMode _themeMode = ThemeMode.dark;
 
   @override
+  void initState() {
+    super.initState();
+    final saved = LocalStorage.box(LocalStorage.settingsBox).get('theme_mode') as String?;
+    _themeMode = saved == 'light' ? ThemeMode.light : ThemeMode.dark;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final authRepository = AuthRepository(AuthService());
-    final dashboardRepository = DashboardRepository(DashboardService());
-    final studyRepository = StudyRepository(StudyService());
-    final notesRepository = NotesRepository(NotesService());
-    final logbookRepository = LogbookRepository(LogbookService());
-    final notificationRepository = NotificationRepository(NotificationService());
+    final apiClient = ApiClient();
+    final authRepository = AuthRepository(AuthService(apiClient));
+    final dashboardRepository = DashboardRepository(DashboardService(apiClient));
+    final studyRepository = StudyRepository(StudyService(apiClient));
+    final notesRepository = NotesRepository(NotesService(apiClient));
+    final logbookRepository = LogbookRepository(LogbookService(apiClient));
+    final notificationRepository = NotificationRepository(NotificationService(apiClient));
 
     return MultiRepositoryProvider(
       providers: [
@@ -94,7 +103,13 @@ class _TogaMobileAppState extends State<TogaMobileApp> {
                 return AppShell(
                   profile: state.profile!,
                   themeMode: _themeMode,
-                  onThemeModeChanged: (mode) => setState(() => _themeMode = mode),
+                  onThemeModeChanged: (mode) async {
+                    await LocalStorage.box(LocalStorage.settingsBox).put(
+                      'theme_mode',
+                      mode == ThemeMode.light ? 'light' : 'dark',
+                    );
+                    setState(() => _themeMode = mode);
+                  },
                 );
               }
               return const LoginScreen();

@@ -1,13 +1,21 @@
-import '../../../core/data/mock_data.dart';
+import '../../../core/network/api_client.dart';
 
 class AuthService {
+  AuthService(this._apiClient);
+
+  final ApiClient _apiClient;
+
   Future<Map<String, dynamic>> loginAsCadet() async {
-    await Future<void>.delayed(const Duration(milliseconds: 700));
+    final response = await _apiClient.postMap(
+      '/auth/login',
+      auth: false,
+      body: {'username': 'arjun.menon', 'password': 'mock-password'},
+    );
     return {
       'success': true,
       'data': {
-        'token': 'mock.jwt.cadet-arjun-menon',
-        'profile': mockProfileJson,
+        'token': response['access_token'],
+        'profile': response['profile'],
       },
     };
   }

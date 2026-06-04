@@ -30,6 +30,11 @@ pip install -r backend/requirements.txt
 uvicorn backend.main:app --reload --port 8000
 ```
 
+On this machine, `python` may resolve to MSYS2 Python. If `python -m venv .venv`
+hangs during `ensurepip`, install a normal Windows CPython distribution or run the
+backend without a venv using `python -m pip install -r backend/requirements.txt`
+and `python -m uvicorn backend.main:app --reload --port 8000`.
+
 Use `POST /auth/login`, then pass `Authorization: Bearer mock.jwt.cadet-arjun-menon`.
 
 ## Structure

@@ -1,8 +1,11 @@
-import '../../../core/data/mock_data.dart';
+import '../../../core/network/api_client.dart';
 
 class DashboardService {
+  DashboardService(this._apiClient);
+
+  final ApiClient _apiClient;
+
   Future<Map<String, dynamic>> fetchDashboard() async {
-    await Future<void>.delayed(const Duration(milliseconds: 650));
-    return mockDashboardJson;
+    return _apiClient.getMap('/toga/cadet/dashboard');
   }
 }

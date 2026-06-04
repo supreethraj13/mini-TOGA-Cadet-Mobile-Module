@@ -56,16 +56,38 @@ class StudySubject {
   final SubjectStatus status;
   final List<Chapter> chapters;
 
-  StudySubject copyWith({List<Chapter>? chapters}) => StudySubject(
-        id: id,
-        subject: subject,
-        progress: progress,
-        lessonsCompleted: lessonsCompleted,
-        totalLessons: totalLessons,
-        quizScore: quizScore,
-        status: status,
-        chapters: chapters ?? this.chapters,
-      );
+  StudySubject copyWith({
+    int? progress,
+    int? lessonsCompleted,
+    int? totalLessons,
+    SubjectStatus? status,
+    List<Chapter>? chapters,
+  }) {
+    final nextProgress = progress ?? this.progress;
+    return StudySubject(
+      id: id,
+      subject: subject,
+      progress: nextProgress,
+      lessonsCompleted: lessonsCompleted ?? this.lessonsCompleted,
+      totalLessons: totalLessons ?? this.totalLessons,
+      quizScore: quizScore,
+      status: status ?? SubjectStatus.fromProgress(nextProgress),
+      chapters: chapters ?? this.chapters,
+    );
+  }
+
+  StudySubject recalculateFromChapters(List<Chapter> nextChapters) {
+    if (nextChapters.isEmpty) return copyWith(chapters: nextChapters);
+    final completedCount = nextChapters.where((chapter) => chapter.completed).length;
+    final nextProgress = ((completedCount / nextChapters.length) * 100).round();
+    return copyWith(
+      progress: nextProgress,
+      lessonsCompleted: completedCount,
+      totalLessons: nextChapters.length,
+      status: SubjectStatus.fromProgress(nextProgress),
+      chapters: nextChapters,
+    );
+  }
 
   factory StudySubject.fromJson(Map<String, dynamic> json) {
     final progress = json['progress'] as int;

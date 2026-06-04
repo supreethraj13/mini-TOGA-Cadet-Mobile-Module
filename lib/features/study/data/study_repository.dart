@@ -25,7 +25,7 @@ class StudyRepository {
     final chapters = subject.chapters
         .map((item) => item.id == chapter.id ? item.copyWith(completed: nextValue) : item)
         .toList();
-    return subject.copyWith(chapters: chapters);
+    return subject.recalculateFromChapters(chapters);
   }
 
   StudySubject _hydrateSubject(Map<String, dynamic> item) {

@@ -5,6 +5,7 @@ class LocalStorage {
   static const notesBox = 'notes_box';
   static const notificationBox = 'notification_box';
   static const chapterBox = 'chapter_box';
+  static const settingsBox = 'settings_box';
 
   static Future<void> init() async {
     await Future.wait([
@@ -12,6 +13,7 @@ class LocalStorage {
       Hive.openBox<dynamic>(notesBox),
       Hive.openBox<dynamic>(notificationBox),
       Hive.openBox<dynamic>(chapterBox),
+      Hive.openBox<dynamic>(settingsBox),
     ]);
   }
 
