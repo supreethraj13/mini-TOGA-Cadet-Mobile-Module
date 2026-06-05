@@ -61,8 +61,17 @@ Hive persists mock session, study notes, notification read state, and chapter co
 
 Repositories are endpoint-shaped and can swap mock services for real REST clients. Docs in `docs/api-readiness.md` describe JWT, refresh tokens, error display, offline note sync, and Skynet sync.
 
-## Improvements
+## Known Limitations
 
-Add Dio interceptors, secure token storage, typed Hive adapters, background sync, richer widget tests, CI, and generated screenshots/APK.
-# mini-TOGA-Cadet-Mobile-Module
-# mini-TOGA-Cadet-Mobile-Module
+- Real JWT verification is skipped on the client-side; it only checks if the token exists.
+- The app uses `http` instead of `dio`, missing out on built-in interceptors for token refresh.
+- Notes sync is rudimentary and lacks a background queue system (e.g., Workmanager) when the app is killed.
+- Skynet sync is currently mocked and not connected to an external fleet management system.
+
+## Improvements with More Time
+
+Add Dio interceptors for auth, secure token storage (flutter_secure_storage), typed Hive adapters, background sync via Workmanager, richer widget tests, CI/CD pipelines, and generated screenshots/APK.
+
+## AI Usage Summary
+
+AI tools were used for generating boilerplate code, setting up BLoC/Cubit structures, creating mock FastAPI routes, writing documentation, and testing. See `docs/ai-usage-disclosure.md` for full details.
