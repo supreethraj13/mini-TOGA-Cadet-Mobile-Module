@@ -58,8 +58,11 @@ Hive persists mock session, study notes, notification read state, and chapter co
 Repositories are endpoint-shaped and can swap mock services for real REST clients. Docs in `docs/api-readiness.md` describe JWT, refresh tokens, error display, offline note sync, and Skynet sync.
 
 ## Build APK
-BASH - flutter build apk
-then apk is present in build/app/outputs/flutter-apk/app-release
+
+```bash
+flutter build apk
+```
+Then the APK is present in build/app/outputs/flutter-apk/app-release
 
 ## Improvements
 
