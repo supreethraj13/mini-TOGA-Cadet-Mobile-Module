@@ -80,12 +80,17 @@ class _StudySubjectsScreenState extends State<StudySubjectsScreen> {
                       title: 'No subjects found',
                       message: 'Adjust the search or status filter.',
                     )
-                  : ListView.separated(
-                      padding: const EdgeInsets.all(16),
-                      itemBuilder: (context, index) =>
-                          _SubjectCard(subject: state.filteredSubjects[index]),
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
-                      itemCount: state.filteredSubjects.length,
+                  : Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 800),
+                        child: ListView.separated(
+                          padding: const EdgeInsets.all(16),
+                          itemBuilder: (context, index) =>
+                              _SubjectCard(subject: state.filteredSubjects[index]),
+                          separatorBuilder: (_, __) => const SizedBox(height: 12),
+                          itemCount: state.filteredSubjects.length,
+                        ),
+                      ),
                     ),
             ),
           ],

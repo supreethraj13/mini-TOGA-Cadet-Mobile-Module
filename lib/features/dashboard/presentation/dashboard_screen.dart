@@ -74,9 +74,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
               ];
-              return ListView(
-                padding: EdgeInsets.all(wide ? 24 : 16),
-                children: [
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 900),
+                  child: ListView(
+                    padding: EdgeInsets.all(wide ? 24 : 16),
+                    children: [
                   Card(
                     child: Padding(
                       padding: EdgeInsets.all(wide ? 24 : 16),
@@ -123,12 +126,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       (card) => [card, const SizedBox(height: 12)],
                     ),
                   const SizedBox(height: 8),
-                  AppButton(
-                    label: 'Continue Study',
-                    icon: Icons.menu_book_rounded,
-                    onPressed: widget.onContinueStudy,
-                  ),
-                ],
+                    AppButton(
+                      label: 'Continue Study',
+                      icon: Icons.menu_book_rounded,
+                      onPressed: widget.onContinueStudy,
+                    ),
+                  ],
+                ),
+                ),
               );
             },
           ),
