@@ -6,12 +6,23 @@ from pydantic import BaseModel, Field
 
 app = FastAPI(title="TOGA Mock API", version="0.1.0")
 
-MOCK_TOKEN = "mock.jwt.cadet-arjun-menon"
+MOCK_TOKEN_PREFIX = "mock.jwt."
 
 
 class LoginRequest(BaseModel):
     username: str = Field(default="arjun.menon")
     password: str = Field(default="mock-password")
+    profile_id: str = Field(default="cadet-arjun-menon")
+    mode: str = Field(default="login")
+    name: str | None = None
+    course: str | None = None
+    base: str | None = None
+    fto_name: str | None = None
+    instructor_name: str | None = None
+
+
+class ChapterCompletionRequest(BaseModel):
+    completed: bool
 
 
 class StudyNoteRequest(BaseModel):
@@ -20,15 +31,37 @@ class StudyNoteRequest(BaseModel):
     body: str = Field(min_length=1)
 
 
-profile = {
-    "id": "cadet-arjun-menon",
-    "name": "Arjun Menon",
-    "role": "Cadet",
-    "course": "PPL",
-    "base": "Chennai",
-    "fto": {"id": "fto-airman", "name": "AIRMAN Flight Academy", "base": "Chennai"},
-    "instructor": {"id": "inst-sharma", "name": "Capt. R. Sharma", "rating": "CFI"},
-}
+profiles = [
+    {
+        "id": "cadet-arjun-menon",
+        "name": "Arjun Menon",
+        "role": "Cadet",
+        "course": "PPL",
+        "base": "Chennai",
+        "fto": {"id": "fto-airman", "name": "AIRMAN Flight Academy", "base": "Chennai"},
+        "instructor": {"id": "inst-sharma", "name": "Capt. R. Sharma", "rating": "CFI"},
+    },
+    {
+        "id": "cadet-maya-iyer",
+        "name": "Maya Iyer",
+        "role": "Cadet",
+        "course": "CPL",
+        "base": "Bengaluru",
+        "fto": {"id": "fto-skyline", "name": "Skyline Aviation Academy", "base": "Bengaluru"},
+        "instructor": {"id": "inst-rao", "name": "Capt. N. Rao", "rating": "CFI"},
+    },
+    {
+        "id": "cadet-veer-kapoor",
+        "name": "Veer Kapoor",
+        "role": "Cadet",
+        "course": "PPL",
+        "base": "Delhi",
+        "fto": {"id": "fto-northern", "name": "Northern Wings FTO", "base": "Delhi"},
+        "instructor": {"id": "inst-khan", "name": "Capt. A. Khan", "rating": "CFI"},
+    },
+]
+
+profile = profiles[0]
 
 dashboard = {
     "cadet_name": "Arjun Menon",
@@ -177,31 +210,130 @@ notifications = [
 ]
 
 
+def recalculate_subject(subject: dict) -> dict:
+    chapters = subject.get("chapters", [])
+    if not chapters:
+        return subject
+    completed = sum(1 for chapter in chapters if chapter["completed"])
+    progress = round((completed / len(chapters)) * 100)
+    subject["progress"] = progress
+    subject["lessons_completed"] = completed
+    subject["total_lessons"] = len(chapters)
+    if progress == 0:
+        subject["status"] = "Not Started"
+    elif progress == 100:
+        subject["status"] = "Completed"
+    else:
+        subject["status"] = "In Progress"
+    return subject
+
+
+def recalculate_dashboard(active_profile: dict) -> dict:
+    for subject in subjects:
+        recalculate_subject(subject)
+    if subjects:
+        dashboard["overall_study_progress"] = round(
+            sum(subject["progress"] for subject in subjects) / len(subjects)
+        )
+    dashboard["cadet_name"] = active_profile["name"]
+    dashboard["course"] = active_profile["course"]
+    dashboard["assigned_fto"] = active_profile["fto"]["name"]
+    dashboard["assigned_instructor"] = active_profile["instructor"]["name"]
+    return dashboard
+
+
+def find_profile(profile_id: str) -> dict:
+    for item in profiles:
+        if item["id"] == profile_id:
+            return item
+    raise HTTPException(status_code=404, detail="Mock cadet profile not found")
+
+
+def profile_id_from_username(username: str) -> str:
+    normalized = "".join(
+        character.lower() if character.isalnum() else "-"
+        for character in username.strip()
+    ).strip("-")
+    return f"cadet-{normalized or 'new'}"
+
+
+def entered_profile(payload: LoginRequest, *, create_from_username: bool) -> dict:
+    existing = find_profile(payload.profile_id)
+    profile_id = (
+        profile_id_from_username(payload.username)
+        if create_from_username
+        else existing["id"]
+    )
+    cadet_name = payload.name or existing["name"]
+    custom_profile = {
+        "id": profile_id,
+        "name": cadet_name,
+        "role": "Cadet",
+        "course": payload.course or existing["course"],
+        "base": payload.base or existing["base"],
+        "fto": {
+            "id": f"fto-{profile_id}",
+            "name": payload.fto_name or existing["fto"]["name"],
+            "base": payload.base or existing["fto"]["base"],
+        },
+        "instructor": {
+            "id": f"inst-{profile_id}",
+            "name": payload.instructor_name or existing["instructor"]["name"],
+            "rating": "CFI",
+        },
+    }
+    for index, item in enumerate(profiles):
+        if item["id"] == profile_id:
+            profiles[index] = custom_profile
+            return custom_profile
+    profiles.append(custom_profile)
+    return custom_profile
+
+
 def require_cadet(authorization: Annotated[str | None, Header()] = None) -> dict:
-    if authorization != f"Bearer {MOCK_TOKEN}":
+    if authorization is None or not authorization.startswith(f"Bearer {MOCK_TOKEN_PREFIX}"):
         raise HTTPException(status_code=401, detail="Invalid or missing JWT")
-    if profile["role"] != "Cadet":
+    profile_id = authorization.removeprefix(f"Bearer {MOCK_TOKEN_PREFIX}")
+    active_profile = find_profile(profile_id)
+    if active_profile["role"] != "Cadet":
         raise HTTPException(status_code=403, detail="Cadet role required")
-    return profile
+    return active_profile
 
 
 @app.post("/auth/login")
-def login(_: LoginRequest):
-    return {"access_token": MOCK_TOKEN, "token_type": "bearer", "profile": profile}
+def login(payload: LoginRequest):
+    active_profile = (
+        entered_profile(payload, create_from_username=payload.mode == "signup")
+        if payload.mode == "signup"
+        else entered_profile(payload, create_from_username=False)
+    )
+    return {
+        "access_token": f"{MOCK_TOKEN_PREFIX}{active_profile['id']}",
+        "token_type": "bearer",
+        "profile": active_profile,
+        "mode": payload.mode,
+    }
+
+
+@app.get("/auth/mock-profiles")
+def mock_profiles():
+    return profiles
 
 
 @app.get("/toga/cadet/me")
-def cadet_me(_: Annotated[dict, Depends(require_cadet)]):
-    return profile
+def cadet_me(active_profile: Annotated[dict, Depends(require_cadet)]):
+    return active_profile
 
 
 @app.get("/toga/cadet/dashboard")
-def cadet_dashboard(_: Annotated[dict, Depends(require_cadet)]):
-    return dashboard
+def cadet_dashboard(active_profile: Annotated[dict, Depends(require_cadet)]):
+    return recalculate_dashboard(active_profile)
 
 
 @app.get("/toga/study/subjects")
 def study_subjects(_: Annotated[dict, Depends(require_cadet)]):
+    for subject in subjects:
+        recalculate_subject(subject)
     return subjects
 
 
@@ -209,7 +341,25 @@ def study_subjects(_: Annotated[dict, Depends(require_cadet)]):
 def study_subject(subject_id: str, _: Annotated[dict, Depends(require_cadet)]):
     for subject in subjects:
         if subject["id"] == subject_id:
-            return subject
+            return recalculate_subject(subject)
+    raise HTTPException(status_code=404, detail="Subject not found")
+
+
+@app.post("/toga/study/subjects/{subject_id}/chapters/{chapter_id}/completion")
+def update_chapter_completion(
+    subject_id: str,
+    chapter_id: str,
+    payload: ChapterCompletionRequest,
+    _: Annotated[dict, Depends(require_cadet)],
+):
+    for subject in subjects:
+        if subject["id"] != subject_id:
+            continue
+        for chapter in subject["chapters"]:
+            if chapter["id"] == chapter_id:
+                chapter["completed"] = payload.completed
+                return recalculate_subject(subject)
+        raise HTTPException(status_code=404, detail="Chapter not found")
     raise HTTPException(status_code=404, detail="Subject not found")
 
 

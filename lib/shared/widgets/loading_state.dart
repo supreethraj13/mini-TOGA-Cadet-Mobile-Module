@@ -30,7 +30,9 @@ class _ShimmerSkeletonState extends State<ShimmerSkeleton>
 
   @override
   Widget build(BuildContext context) {
-    final base = Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(.35);
+    final base = Theme.of(
+      context,
+    ).colorScheme.surfaceContainerHighest.withOpacity(.35);
     final highlight = Theme.of(context).colorScheme.primary.withOpacity(.18);
     return Padding(
       padding: const EdgeInsets.all(16),

@@ -11,14 +11,18 @@ enum SubjectStatus {
 
   static SubjectStatus fromProgress(int progress) {
     if (progress < 0 || progress > 100) {
-      throw AppError('Study progress must be between 0 and 100.', code: 'invalid_progress');
+      throw AppError(
+        'Study progress must be between 0 and 100.',
+        code: 'invalid_progress',
+      );
     }
     if (progress == 0) return SubjectStatus.notStarted;
     if (progress == 100) return SubjectStatus.completed;
     return SubjectStatus.inProgress;
   }
 
-  static SubjectStatus fromLabel(String label) => SubjectStatus.values.firstWhere(
+  static SubjectStatus fromLabel(String label) =>
+      SubjectStatus.values.firstWhere(
         (value) => value.label == label,
         orElse: () => SubjectStatus.fromProgress(0),
       );
@@ -36,14 +40,23 @@ class StudySubject {
     required this.chapters,
   }) {
     if (progress < 0 || progress > 100) {
-      throw AppError('Study progress must be between 0 and 100.', code: 'invalid_progress');
+      throw AppError(
+        'Study progress must be between 0 and 100.',
+        code: 'invalid_progress',
+      );
     }
     if (quizScore < 0 || quizScore > 100) {
-      throw AppError('Quiz score must be between 0 and 100.', code: 'invalid_quiz_score');
+      throw AppError(
+        'Quiz score must be between 0 and 100.',
+        code: 'invalid_quiz_score',
+      );
     }
     final expected = SubjectStatus.fromProgress(progress);
     if (status != expected) {
-      throw AppError('Subject status must match progress boundary rules.', code: 'invalid_status');
+      throw AppError(
+        'Subject status must match progress boundary rules.',
+        code: 'invalid_status',
+      );
     }
   }
 
@@ -78,7 +91,9 @@ class StudySubject {
 
   StudySubject recalculateFromChapters(List<Chapter> nextChapters) {
     if (nextChapters.isEmpty) return copyWith(chapters: nextChapters);
-    final completedCount = nextChapters.where((chapter) => chapter.completed).length;
+    final completedCount = nextChapters
+        .where((chapter) => chapter.completed)
+        .length;
     final nextProgress = ((completedCount / nextChapters.length) * 100).round();
     return copyWith(
       progress: nextProgress,
@@ -100,19 +115,21 @@ class StudySubject {
       quizScore: json['quiz_score'] as int,
       status: SubjectStatus.fromLabel(json['status'] as String),
       chapters: (json['chapters'] as List? ?? const [])
-          .map((item) => Chapter.fromJson(Map<String, dynamic>.from(item as Map)))
+          .map(
+            (item) => Chapter.fromJson(Map<String, dynamic>.from(item as Map)),
+          )
           .toList(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'subject': subject,
-        'progress': progress,
-        'lessons_completed': lessonsCompleted,
-        'total_lessons': totalLessons,
-        'quiz_score': quizScore,
-        'status': status.label,
-        'chapters': chapters.map((chapter) => chapter.toJson()).toList(),
-      };
+    'id': id,
+    'subject': subject,
+    'progress': progress,
+    'lessons_completed': lessonsCompleted,
+    'total_lessons': totalLessons,
+    'quiz_score': quizScore,
+    'status': status.label,
+    'chapters': chapters.map((chapter) => chapter.toJson()).toList(),
+  };
 }

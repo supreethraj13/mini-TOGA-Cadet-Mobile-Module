@@ -17,35 +17,72 @@ class NotesCubit extends Cubit<NotesState> {
       final notes = await _repository.loadNotes();
       emit(state.copyWith(status: NotesStatus.success, notes: notes));
     } catch (error) {
-      emit(state.copyWith(status: NotesStatus.failure, error: error.toString()));
+      emit(
+        state.copyWith(status: NotesStatus.failure, error: error.toString()),
+      );
     }
   }
 
-  Future<void> saveNote({required String subjectId, required String subject, required String body}) async {
+  Future<void> saveNote({
+    required String subjectId,
+    required String subject,
+    required String body,
+  }) async {
     emit(state.copyWith(actionStatus: NotesStatus.loading));
     try {
-      final note = await _repository.saveNote(subjectId: subjectId, subject: subject, body: body);
-      emit(state.copyWith(
-        status: NotesStatus.success,
-        actionStatus: NotesStatus.success,
-        notes: [note, ...state.notes],
-      ));
+      final note = await _repository.saveNote(
+        subjectId: subjectId,
+        subject: subject,
+        body: body,
+      );
+      emit(
+        state.copyWith(
+          status: NotesStatus.success,
+          actionStatus: NotesStatus.success,
+          notes: [note, ...state.notes],
+        ),
+      );
     } catch (error) {
-      emit(state.copyWith(actionStatus: NotesStatus.failure, error: error.toString()));
+      emit(
+        state.copyWith(
+          actionStatus: NotesStatus.failure,
+          error: error.toString(),
+        ),
+      );
     }
   }
 
   Future<void> syncNote(StudyNote note) async {
     final syncing = note.copyWith(syncStatus: SyncStatus.syncing);
-    emit(state.copyWith(notes: _replace(syncing), actionStatus: NotesStatus.loading));
+    emit(
+      state.copyWith(
+        notes: _replace(syncing),
+        actionStatus: NotesStatus.loading,
+      ),
+    );
     try {
       final synced = await _repository.sync(note);
-      emit(state.copyWith(notes: _replace(synced), actionStatus: NotesStatus.success));
+      emit(
+        state.copyWith(
+          notes: _replace(synced),
+          actionStatus: NotesStatus.success,
+        ),
+      );
     } catch (error) {
-      final failed = note.copyWith(syncStatus: SyncStatus.failed, failureMessage: error.toString());
-      emit(state.copyWith(notes: _replace(failed), actionStatus: NotesStatus.failure, error: error.toString()));
+      final failed = note.copyWith(
+        syncStatus: SyncStatus.failed,
+        failureMessage: error.toString(),
+      );
+      emit(
+        state.copyWith(
+          notes: _replace(failed),
+          actionStatus: NotesStatus.failure,
+          error: error.toString(),
+        ),
+      );
     }
   }
 
-  List<StudyNote> _replace(StudyNote note) => state.notes.map((item) => item.id == note.id ? note : item).toList();
+  List<StudyNote> _replace(StudyNote note) =>
+      state.notes.map((item) => item.id == note.id ? note : item).toList();
 }

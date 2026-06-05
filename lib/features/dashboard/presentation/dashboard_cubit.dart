@@ -15,9 +15,16 @@ class DashboardCubit extends Cubit<DashboardState> {
     emit(state.copyWith(status: DashboardStatus.loading));
     try {
       final dashboard = await _repository.fetchDashboard();
-      emit(state.copyWith(status: DashboardStatus.success, dashboard: dashboard));
+      emit(
+        state.copyWith(status: DashboardStatus.success, dashboard: dashboard),
+      );
     } catch (error) {
-      emit(state.copyWith(status: DashboardStatus.failure, error: error.toString()));
+      emit(
+        state.copyWith(
+          status: DashboardStatus.failure,
+          error: error.toString(),
+        ),
+      );
     }
   }
 }

@@ -30,17 +30,20 @@ import 'features/study/presentation/study_cubit.dart';
 import 'shared/app_shell.dart';
 
 Future<void> main() async {
-  await runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    Bloc.observer = AppBlocObserver();
-    await Hive.initFlutter();
-    await LocalStorage.init();
-    runApp(const TogaMobileApp());
-  }, (error, stackTrace) {
-    FlutterError.reportError(
-      FlutterErrorDetails(exception: error, stack: stackTrace),
-    );
-  });
+  await runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      Bloc.observer = AppBlocObserver();
+      await Hive.initFlutter();
+      await LocalStorage.init();
+      runApp(const TogaMobileApp());
+    },
+    (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(exception: error, stack: stackTrace),
+      );
+    },
+  );
 }
 
 class TogaMobileApp extends StatefulWidget {
@@ -56,7 +59,8 @@ class _TogaMobileAppState extends State<TogaMobileApp> {
   @override
   void initState() {
     super.initState();
-    final saved = LocalStorage.box(LocalStorage.settingsBox).get('theme_mode') as String?;
+    final saved =
+        LocalStorage.box(LocalStorage.settingsBox).get('theme_mode') as String?;
     _themeMode = saved == 'light' ? ThemeMode.light : ThemeMode.dark;
   }
 
@@ -64,11 +68,15 @@ class _TogaMobileAppState extends State<TogaMobileApp> {
   Widget build(BuildContext context) {
     final apiClient = ApiClient();
     final authRepository = AuthRepository(AuthService(apiClient));
-    final dashboardRepository = DashboardRepository(DashboardService(apiClient));
+    final dashboardRepository = DashboardRepository(
+      DashboardService(apiClient),
+    );
     final studyRepository = StudyRepository(StudyService(apiClient));
     final notesRepository = NotesRepository(NotesService(apiClient));
     final logbookRepository = LogbookRepository(LogbookService(apiClient));
-    final notificationRepository = NotificationRepository(NotificationService(apiClient));
+    final notificationRepository = NotificationRepository(
+      NotificationService(apiClient),
+    );
 
     return MultiRepositoryProvider(
       providers: [
@@ -81,14 +89,16 @@ class _TogaMobileAppState extends State<TogaMobileApp> {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (_) => AuthCubit(authRepository)..restoreSession()),
+          BlocProvider(
+            create: (_) => AuthCubit(authRepository)..restoreSession(),
+          ),
           BlocProvider(create: (_) => DashboardCubit(dashboardRepository)),
           BlocProvider(create: (_) => StudyCubit(studyRepository)),
           BlocProvider(create: (_) => NotesCubit(notesRepository)..loadNotes()),
           BlocProvider(create: (_) => LogbookCubit(logbookRepository)),
           BlocProvider(
-            create: (_) => NotificationsCubit(notificationRepository)
-              ..loadNotifications(),
+            create: (_) =>
+                NotificationsCubit(notificationRepository)..loadNotifications(),
           ),
         ],
         child: MaterialApp(

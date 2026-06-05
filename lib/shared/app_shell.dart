@@ -40,18 +40,30 @@ class _AppShellState extends State<AppShell> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(['TOGA Flight Deck', 'Study', 'Notes', 'Logbook', 'Notifications'][_index]),
+        title: Text(
+          [
+            'TOGA Flight Deck',
+            'Study',
+            'Notes',
+            'Logbook',
+            'Notifications',
+          ][_index],
+        ),
         actions: [
           IconButton(
             tooltip: 'Toggle theme',
             onPressed: () {
               widget.onThemeModeChanged(
-                widget.themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark,
+                widget.themeMode == ThemeMode.dark
+                    ? ThemeMode.light
+                    : ThemeMode.dark,
               );
             },
-            icon: Icon(widget.themeMode == ThemeMode.dark
-                ? Icons.light_mode_rounded
-                : Icons.dark_mode_rounded),
+            icon: Icon(
+              widget.themeMode == ThemeMode.dark
+                  ? Icons.light_mode_rounded
+                  : Icons.dark_mode_rounded,
+            ),
           ),
           IconButton(
             tooltip: 'Logout',
@@ -65,11 +77,26 @@ class _AppShellState extends State<AppShell> {
         selectedIndex: _index,
         onDestinationSelected: (value) => setState(() => _index = value),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.space_dashboard_rounded), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.menu_book_rounded), label: 'Study'),
-          NavigationDestination(icon: Icon(Icons.edit_note_rounded), label: 'Notes'),
-          NavigationDestination(icon: Icon(Icons.flight_takeoff_rounded), label: 'Logbook'),
-          NavigationDestination(icon: Icon(Icons.notifications_rounded), label: 'Alerts'),
+          NavigationDestination(
+            icon: Icon(Icons.space_dashboard_rounded),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.menu_book_rounded),
+            label: 'Study',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.edit_note_rounded),
+            label: 'Notes',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.flight_takeoff_rounded),
+            label: 'Logbook',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.notifications_rounded),
+            label: 'Alerts',
+          ),
         ],
       ),
     );

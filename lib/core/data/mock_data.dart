@@ -48,7 +48,11 @@ final mockSubjectsJson = [
     'chapters': [
       {'id': 'met-1', 'chapter': 'Atmosphere', 'completed': true},
       {'id': 'met-2', 'chapter': 'Pressure Systems', 'completed': true},
-      {'id': 'met-3', 'chapter': 'Clouds and Precipitation', 'completed': false},
+      {
+        'id': 'met-3',
+        'chapter': 'Clouds and Precipitation',
+        'completed': false,
+      },
       {'id': 'met-4', 'chapter': 'Thunderstorms', 'completed': false},
     ],
   },

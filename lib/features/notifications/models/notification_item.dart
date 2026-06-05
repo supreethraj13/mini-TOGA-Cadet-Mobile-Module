@@ -16,15 +16,16 @@ class NotificationItem {
   final bool isRead;
 
   NotificationItem copyWith({bool? isRead}) => NotificationItem(
-        id: id,
-        title: title,
-        message: message,
-        type: type,
-        time: time,
-        isRead: isRead ?? this.isRead,
-      );
+    id: id,
+    title: title,
+    message: message,
+    type: type,
+    time: time,
+    isRead: isRead ?? this.isRead,
+  );
 
-  factory NotificationItem.fromJson(Map<String, dynamic> json) => NotificationItem(
+  factory NotificationItem.fromJson(Map<String, dynamic> json) =>
+      NotificationItem(
         id: json['id'] as String,
         title: json['title'] as String,
         message: json['message'] as String,
@@ -34,11 +35,11 @@ class NotificationItem {
       );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'message': message,
-        'type': type,
-        'time': time.toIso8601String(),
-        'is_read': isRead,
-      };
+    'id': id,
+    'title': title,
+    'message': message,
+    'type': type,
+    'time': time.toIso8601String(),
+    'is_read': isRead,
+  };
 }

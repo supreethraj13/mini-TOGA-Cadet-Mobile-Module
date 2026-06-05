@@ -18,26 +18,39 @@ class StudyRepository {
     return _hydrateSubject(item);
   }
 
-  Future<StudySubject> toggleChapter(StudySubject subject, Chapter chapter) async {
-    final box = LocalStorage.box(LocalStorage.chapterBox);
+  Future<StudySubject> toggleChapter(
+    StudySubject subject,
+    Chapter chapter,
+  ) async {
     final nextValue = !chapter.completed;
-    await box.put(chapter.id, nextValue);
-    final chapters = subject.chapters
-        .map((item) => item.id == chapter.id ? item.copyWith(completed: nextValue) : item)
-        .toList();
-    return subject.recalculateFromChapters(chapters);
+    final item = await _service.updateChapterCompletion(
+      subjectId: subject.id,
+      chapterId: chapter.id,
+      completed: nextValue,
+    );
+    final updated = StudySubject.fromJson(item);
+    final box = LocalStorage.box(LocalStorage.chapterBox);
+    for (final updatedChapter in updated.chapters) {
+      await box.put(updatedChapter.id, updatedChapter.completed);
+    }
+    return updated;
   }
 
   StudySubject _hydrateSubject(Map<String, dynamic> item) {
     final box = LocalStorage.box(LocalStorage.chapterBox);
-    final chapters = (item['chapters'] as List)
-        .map((raw) {
-          final map = Map<String, dynamic>.from(raw as Map);
-          final override = box.get(map['id'] as String);
-          if (override is bool) map['completed'] = override;
-          return map;
-        })
-        .toList();
-    return StudySubject.fromJson({...item, 'chapters': chapters});
+    var hasOverrides = false;
+    final chapters = (item['chapters'] as List).map((raw) {
+      final map = Map<String, dynamic>.from(raw as Map);
+      final override = box.get(map['id'] as String);
+      if (override is bool) {
+        map['completed'] = override;
+        hasOverrides = true;
+      }
+      return map;
+    }).toList();
+    final subject = StudySubject.fromJson({...item, 'chapters': chapters});
+    return hasOverrides
+        ? subject.recalculateFromChapters(subject.chapters)
+        : subject;
   }
 }

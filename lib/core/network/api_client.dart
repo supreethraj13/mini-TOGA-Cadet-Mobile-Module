@@ -3,18 +3,18 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../errors/app_error.dart';
 import '../storage/local_storage.dart';
 
 class ApiClient {
-  ApiClient({
-    http.Client? client,
-    String? baseUrl,
-  })  : _client = client ?? http.Client(),
-        baseUrl = baseUrl ??
-            const String.fromEnvironment(
-              'TOGA_API_BASE_URL',
-              defaultValue: 'http://127.0.0.1:8000',
-            );
+  ApiClient({http.Client? client, String? baseUrl})
+    : _client = client ?? http.Client(),
+      baseUrl =
+          baseUrl ??
+          const String.fromEnvironment(
+            'TOGA_API_BASE_URL',
+            defaultValue: 'http://127.0.0.1:8000',
+          );
 
   final http.Client _client;
   final String baseUrl;
@@ -24,7 +24,10 @@ class ApiClient {
     return Map<String, dynamic>.from(jsonDecode(response.body) as Map);
   }
 
-  Future<List<Map<String, dynamic>>> getList(String path, {bool auth = true}) async {
+  Future<List<Map<String, dynamic>>> getList(
+    String path, {
+    bool auth = true,
+  }) async {
     final response = await _send('GET', path, auth: auth);
     return (jsonDecode(response.body) as List)
         .map((item) => Map<String, dynamic>.from(item as Map))
@@ -54,18 +57,51 @@ class ApiClient {
     final uri = Uri.parse('$baseUrl$path');
     final headers = <String, String>{'Content-Type': 'application/json'};
     if (auth) {
-      final token = LocalStorage.box(LocalStorage.sessionBox).get('token') as String?;
+      final token =
+          LocalStorage.box(LocalStorage.sessionBox).get('token') as String?;
       if (token != null) headers['Authorization'] = 'Bearer $token';
     }
-    final request = switch (method) {
-      'POST' => _client.post(uri, headers: headers, body: jsonEncode(body ?? {})),
+    final Future<http.Response> request = switch (method) {
+      'POST' => _client.post(
+        uri,
+        headers: headers,
+        body: jsonEncode(body ?? {}),
+      ),
       'PATCH' => _client.patch(uri, headers: headers),
       _ => _client.get(uri, headers: headers),
     };
-    final response = await request.timeout(const Duration(seconds: 2));
+    final http.Response response;
+    try {
+      response = await request.timeout(const Duration(seconds: 2));
+    } on TimeoutException {
+      throw AppError(
+        'Cannot reach the TOGA mock API at $baseUrl. Start the backend and try again.',
+        code: 'api_timeout',
+      );
+    } on http.ClientException {
+      throw AppError(
+        'The TOGA mock API is not responding at $baseUrl. Start the backend and try again.',
+        code: 'api_unavailable',
+      );
+    }
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw TimeoutException('API $method $path failed: ${response.statusCode}');
+      throw AppError(
+        _errorMessage(response, method, path),
+        code: 'api_${response.statusCode}',
+      );
     }
     return response;
+  }
+
+  String _errorMessage(http.Response response, String method, String path) {
+    try {
+      final decoded = jsonDecode(response.body);
+      if (decoded is Map && decoded['detail'] != null) {
+        return decoded['detail'].toString();
+      }
+    } catch (_) {
+      // Fall through to the generic message below.
+    }
+    return 'TOGA API request $method $path failed with status ${response.statusCode}.';
   }
 }

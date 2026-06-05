@@ -5,11 +5,27 @@ class AuthService {
 
   final ApiClient _apiClient;
 
-  Future<Map<String, dynamic>> loginAsCadet() async {
+  Future<List<Map<String, dynamic>>> fetchMockProfiles() {
+    return _apiClient.getList('/auth/mock-profiles', auth: false);
+  }
+
+  Future<Map<String, dynamic>> loginAsCadet({
+    required String profileId,
+    required String mode,
+    required String username,
+    required String password,
+    Map<String, dynamic>? profileDetails,
+  }) async {
     final response = await _apiClient.postMap(
       '/auth/login',
       auth: false,
-      body: {'username': 'arjun.menon', 'password': 'mock-password'},
+      body: {
+        'username': username,
+        'password': password,
+        'profile_id': profileId,
+        'mode': mode,
+        ...?profileDetails,
+      },
     );
     return {
       'success': true,

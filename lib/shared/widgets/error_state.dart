@@ -14,7 +14,11 @@ class ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.error, size: 42),
+            Icon(
+              Icons.warning_amber_rounded,
+              color: Theme.of(context).colorScheme.error,
+              size: 42,
+            ),
             const SizedBox(height: 12),
             Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 16),

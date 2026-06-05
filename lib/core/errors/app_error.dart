@@ -5,5 +5,5 @@ class AppError implements Exception {
   final String code;
 
   @override
-  String toString() => 'AppError($code): $message';
+  String toString() => message;
 }

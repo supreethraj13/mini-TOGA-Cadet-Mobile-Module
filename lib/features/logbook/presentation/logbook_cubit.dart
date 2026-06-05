@@ -17,7 +17,9 @@ class LogbookCubit extends Cubit<LogbookState> {
       final summary = await _repository.fetchSummary();
       emit(state.copyWith(status: LogbookStatus.success, summary: summary));
     } catch (error) {
-      emit(state.copyWith(status: LogbookStatus.failure, error: error.toString()));
+      emit(
+        state.copyWith(status: LogbookStatus.failure, error: error.toString()),
+      );
     }
   }
 }

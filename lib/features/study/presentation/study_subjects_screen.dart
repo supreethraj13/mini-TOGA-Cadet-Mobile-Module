@@ -27,7 +27,8 @@ class _StudySubjectsScreenState extends State<StudySubjectsScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<StudyCubit, StudyState>(
       builder: (context, state) {
-        if (state.status == StudyStatus.loading || state.status == StudyStatus.initial) {
+        if (state.status == StudyStatus.loading ||
+            state.status == StudyStatus.initial) {
           return const ShimmerSkeleton(lines: 6);
         }
         if (state.status == StudyStatus.failure) {
@@ -54,12 +55,18 @@ class _StudySubjectsScreenState extends State<StudySubjectsScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        _FilterChip(label: 'All', selected: state.filter == null, onTap: () => context.read<StudyCubit>().setFilter(null)),
+                        _FilterChip(
+                          label: 'All',
+                          selected: state.filter == null,
+                          onTap: () =>
+                              context.read<StudyCubit>().setFilter(null),
+                        ),
                         for (final status in SubjectStatus.values)
                           _FilterChip(
                             label: status.label,
                             selected: state.filter == status,
-                            onTap: () => context.read<StudyCubit>().setFilter(status),
+                            onTap: () =>
+                                context.read<StudyCubit>().setFilter(status),
                           ),
                       ],
                     ),
@@ -69,10 +76,14 @@ class _StudySubjectsScreenState extends State<StudySubjectsScreen> {
             ),
             Expanded(
               child: state.filteredSubjects.isEmpty
-                  ? const EmptyState(title: 'No subjects found', message: 'Adjust the search or status filter.')
+                  ? const EmptyState(
+                      title: 'No subjects found',
+                      message: 'Adjust the search or status filter.',
+                    )
                   : ListView.separated(
                       padding: const EdgeInsets.all(16),
-                      itemBuilder: (context, index) => _SubjectCard(subject: state.filteredSubjects[index]),
+                      itemBuilder: (context, index) =>
+                          _SubjectCard(subject: state.filteredSubjects[index]),
                       separatorBuilder: (_, __) => const SizedBox(height: 12),
                       itemCount: state.filteredSubjects.length,
                     ),
@@ -85,7 +96,11 @@ class _StudySubjectsScreenState extends State<StudySubjectsScreen> {
 }
 
 class _FilterChip extends StatelessWidget {
-  const _FilterChip({required this.label, required this.selected, required this.onTap});
+  const _FilterChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -95,7 +110,11 @@ class _FilterChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: FilterChip(label: Text(label), selected: selected, onSelected: (_) => onTap()),
+      child: FilterChip(
+        label: Text(label),
+        selected: selected,
+        onSelected: (_) => onTap(),
+      ),
     );
   }
 }
@@ -117,16 +136,28 @@ class _SubjectCard extends StatelessWidget {
         onTap: () async {
           await context.read<StudyCubit>().selectSubject(subject.id);
           if (!context.mounted) return;
-          Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SubjectDetailScreen()));
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const SubjectDetailScreen(),
+            ),
+          );
         },
-        title: Text(subject.subject, style: const TextStyle(fontWeight: FontWeight.w800)),
+        title: Text(
+          subject.subject,
+          style: const TextStyle(fontWeight: FontWeight.w800),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
-            LinearProgressIndicator(value: subject.progress / 100, minHeight: 6),
+            LinearProgressIndicator(
+              value: subject.progress / 100,
+              minHeight: 6,
+            ),
             const SizedBox(height: 8),
-            Text('${subject.lessonsCompleted}/${subject.totalLessons} lessons · Quiz ${subject.quizScore}%'),
+            Text(
+              '${subject.lessonsCompleted}/${subject.totalLessons} lessons · Quiz ${subject.quizScore}%',
+            ),
           ],
         ),
         trailing: StatusBadge(label: subject.status.label, tone: tone),

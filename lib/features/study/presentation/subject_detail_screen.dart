@@ -13,17 +13,37 @@ class SubjectDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Subject Detail')),
-      body: BlocBuilder<StudyCubit, StudyState>(
+      body: BlocConsumer<StudyCubit, StudyState>(
+        listenWhen: (previous, current) =>
+            previous.error != current.error && current.error != null,
+        listener: (context, state) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.error!)));
+        },
         builder: (context, state) {
-          if (state.detailStatus == StudyStatus.loading) return const ShimmerSkeleton(lines: 5);
+          if (state.detailStatus == StudyStatus.loading) {
+            return const ShimmerSkeleton(lines: 5);
+          }
           final subject = state.selectedSubject;
-          if (subject == null) return const Center(child: Text('No subject selected.'));
+          if (subject == null) {
+            return const Center(child: Text('No subject selected.'));
+          }
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text(subject.subject, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+              Text(
+                subject.subject,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
               const SizedBox(height: 12),
-              ProgressCard(title: 'Subject Progress', value: subject.progress, subtitle: subject.status.label),
+              ProgressCard(
+                title: 'Subject Progress',
+                value: subject.progress,
+                subtitle: subject.status.label,
+              ),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
@@ -31,8 +51,15 @@ class SubjectDetailScreen extends StatelessWidget {
                 children: [
                   _ActionButton(label: 'Quiz', icon: Icons.quiz_rounded),
                   _ActionButton(label: 'Flashcards', icon: Icons.style_rounded),
-                  _ActionButton(label: 'Practice Test', icon: Icons.fact_check_rounded),
-                  _ActionButton(label: 'Ask AIRMAN AI', icon: Icons.auto_awesome_rounded, ai: true),
+                  _ActionButton(
+                    label: 'Practice Test',
+                    icon: Icons.fact_check_rounded,
+                  ),
+                  _ActionButton(
+                    label: 'Ask AIRMAN AI',
+                    icon: Icons.auto_awesome_rounded,
+                    ai: true,
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -40,11 +67,13 @@ class SubjectDetailScreen extends StatelessWidget {
               const SizedBox(height: 8),
               for (final chapter in subject.chapters)
                 Card(
+                  margin: const EdgeInsets.only(bottom: 8),
                   child: CheckboxListTile(
                     value: chapter.completed,
-                    onChanged: (_) => context.read<StudyCubit>().toggleChapter(chapter),
+                    onChanged: (_) =>
+                        context.read<StudyCubit>().toggleChapter(chapter),
                     title: Text(chapter.title),
-                    secondary: Icon(chapter.completed ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded),
+                    controlAffinity: ListTileControlAffinity.leading,
                   ),
                 ),
             ],
@@ -56,7 +85,11 @@ class SubjectDetailScreen extends StatelessWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.label, required this.icon, this.ai = false});
+  const _ActionButton({
+    required this.label,
+    required this.icon,
+    this.ai = false,
+  });
 
   final String label;
   final IconData icon;

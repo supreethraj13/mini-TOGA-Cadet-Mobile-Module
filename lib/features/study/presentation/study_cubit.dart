@@ -18,7 +18,9 @@ class StudyCubit extends Cubit<StudyState> {
       final subjects = await _repository.fetchSubjects();
       emit(state.copyWith(status: StudyStatus.success, subjects: subjects));
     } catch (error) {
-      emit(state.copyWith(status: StudyStatus.failure, error: error.toString()));
+      emit(
+        state.copyWith(status: StudyStatus.failure, error: error.toString()),
+      );
     }
   }
 
@@ -26,20 +28,43 @@ class StudyCubit extends Cubit<StudyState> {
     emit(state.copyWith(detailStatus: StudyStatus.loading));
     try {
       final subject = await _repository.fetchSubject(id);
-      emit(state.copyWith(detailStatus: StudyStatus.success, selectedSubject: subject));
+      emit(
+        state.copyWith(
+          detailStatus: StudyStatus.success,
+          selectedSubject: subject,
+        ),
+      );
     } catch (error) {
-      emit(state.copyWith(detailStatus: StudyStatus.failure, error: error.toString()));
+      emit(
+        state.copyWith(
+          detailStatus: StudyStatus.failure,
+          error: error.toString(),
+        ),
+      );
     }
   }
 
   Future<void> toggleChapter(Chapter chapter) async {
     final selected = state.selectedSubject;
     if (selected == null) return;
-    final updated = await _repository.toggleChapter(selected, chapter);
-    final subjects = state.subjects.map((item) => item.id == updated.id ? updated : item).toList();
-    emit(state.copyWith(selectedSubject: updated, subjects: subjects));
+    try {
+      final updated = await _repository.toggleChapter(selected, chapter);
+      final subjects = state.subjects
+          .map((item) => item.id == updated.id ? updated : item)
+          .toList();
+      emit(
+        state.copyWith(
+          selectedSubject: updated,
+          subjects: subjects,
+          error: null,
+        ),
+      );
+    } catch (error) {
+      emit(state.copyWith(error: error.toString()));
+    }
   }
 
   void setQuery(String query) => emit(state.copyWith(query: query));
-  void setFilter(SubjectStatus? filter) => emit(state.copyWith(filter: filter, clearFilter: filter == null));
+  void setFilter(SubjectStatus? filter) =>
+      emit(state.copyWith(filter: filter, clearFilter: filter == null));
 }

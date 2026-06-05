@@ -10,9 +10,9 @@ enum SyncStatus {
   final String label;
 
   static SyncStatus fromLabel(String label) => SyncStatus.values.firstWhere(
-        (value) => value.label == label,
-        orElse: () => SyncStatus.pending,
-      );
+    (value) => value.label == label,
+    orElse: () => SyncStatus.pending,
+  );
 }
 
 class StudyNote {
@@ -38,7 +38,8 @@ class StudyNote {
   final SyncStatus syncStatus;
   final String? failureMessage;
 
-  StudyNote copyWith({SyncStatus? syncStatus, String? failureMessage}) => StudyNote(
+  StudyNote copyWith({SyncStatus? syncStatus, String? failureMessage}) =>
+      StudyNote(
         id: id,
         subjectId: subjectId,
         subject: subject,
@@ -49,22 +50,22 @@ class StudyNote {
       );
 
   factory StudyNote.fromJson(Map<String, dynamic> json) => StudyNote(
-        id: json['id'] as String,
-        subjectId: json['subject_id'] as String,
-        subject: json['subject'] as String,
-        body: json['body'] as String,
-        createdAt: DateTime.parse(json['created_at'] as String),
-        syncStatus: SyncStatus.fromLabel(json['sync_status'] as String),
-        failureMessage: json['failure_message'] as String?,
-      );
+    id: json['id'] as String,
+    subjectId: json['subject_id'] as String,
+    subject: json['subject'] as String,
+    body: json['body'] as String,
+    createdAt: DateTime.parse(json['created_at'] as String),
+    syncStatus: SyncStatus.fromLabel(json['sync_status'] as String),
+    failureMessage: json['failure_message'] as String?,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'subject_id': subjectId,
-        'subject': subject,
-        'body': body,
-        'created_at': createdAt.toIso8601String(),
-        'sync_status': syncStatus.label,
-        'failure_message': failureMessage,
-      };
+    'id': id,
+    'subject_id': subjectId,
+    'subject': subject,
+    'body': body,
+    'created_at': createdAt.toIso8601String(),
+    'sync_status': syncStatus.label,
+    'failure_message': failureMessage,
+  };
 }

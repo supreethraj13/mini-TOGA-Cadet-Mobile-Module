@@ -27,7 +27,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<DashboardCubit, DashboardState>(
       builder: (context, state) {
-        if (state.status == DashboardStatus.loading || state.status == DashboardStatus.initial) {
+        if (state.status == DashboardStatus.loading ||
+            state.status == DashboardStatus.initial) {
           return const ShimmerSkeleton(lines: 5);
         }
         if (state.status == DashboardStatus.failure) {
@@ -67,7 +68,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 _InfoCard(
                   title: 'Notifications',
                   icon: Icons.notifications_active_rounded,
-                  lines: const ['Unread training updates waiting', 'Sync and feedback cards are interactive'],
+                  lines: const [
+                    'Unread training updates waiting',
+                    'Sync and feedback cards are interactive',
+                  ],
                 ),
               ];
               return ListView(
@@ -81,17 +85,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           Text(
                             'Cadet ${dashboard.cadetName}',
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.w800),
                           ),
                           const SizedBox(height: 8),
-                          Text('${dashboard.course} · ${dashboard.trainingStage}'),
+                          Text(
+                            '${dashboard.course} · ${dashboard.trainingStage}',
+                          ),
                           const SizedBox(height: 12),
                           Wrap(
                             spacing: 18,
                             runSpacing: 6,
                             children: [
                               Text('FTO ${dashboard.assignedFto}'),
-                              Text('Instructor ${dashboard.assignedInstructor}'),
+                              Text(
+                                'Instructor ${dashboard.assignedInstructor}',
+                              ),
                             ],
                           ),
                         ],
@@ -110,7 +119,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: cards,
                     )
                   else
-                    ...cards.expand((card) => [card, const SizedBox(height: 12)]),
+                    ...cards.expand(
+                      (card) => [card, const SizedBox(height: 12)],
+                    ),
                   const SizedBox(height: 8),
                   AppButton(
                     label: 'Continue Study',
@@ -128,7 +139,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 }
 
 class _InfoCard extends StatelessWidget {
-  const _InfoCard({required this.title, required this.icon, required this.lines});
+  const _InfoCard({
+    required this.title,
+    required this.icon,
+    required this.lines,
+  });
 
   final String title;
   final IconData icon;
@@ -148,7 +163,10 @@ class _InfoCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
                   const SizedBox(height: 8),
                   for (final line in lines) Text(line),
                 ],

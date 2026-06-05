@@ -17,8 +17,8 @@ class ApiResponse<T> {
   }
 
   Map<String, dynamic> toJson(Object? Function(T value) serializer) => {
-        'success': success,
-        'data': data == null ? null : serializer(data as T),
-        'message': message,
-      };
+    'success': success,
+    'data': data == null ? null : serializer(data as T),
+    'message': message,
+  };
 }

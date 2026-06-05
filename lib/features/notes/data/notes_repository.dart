@@ -14,7 +14,10 @@ class NotesRepository {
   Future<List<StudyNote>> loadNotes() async {
     final box = LocalStorage.box(LocalStorage.notesBox);
     return box.values
-        .map((value) => StudyNote.fromJson(Map<String, dynamic>.from(value as Map)))
+        .map(
+          (value) =>
+              StudyNote.fromJson(Map<String, dynamic>.from(value as Map)),
+        )
         .toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
@@ -39,7 +42,10 @@ class NotesRepository {
   Future<StudyNote> sync(StudyNote note) async {
     final box = LocalStorage.box(LocalStorage.notesBox);
     if (!box.containsKey(note.id)) {
-      throw AppError('Offline note must be saved before sync.', code: 'note_not_saved');
+      throw AppError(
+        'Offline note must be saved before sync.',
+        code: 'note_not_saved',
+      );
     }
     var next = note.copyWith(syncStatus: SyncStatus.syncing);
     await box.put(note.id, next.toJson());
@@ -48,7 +54,8 @@ class NotesRepository {
         ? note.copyWith(syncStatus: SyncStatus.synced)
         : note.copyWith(
             syncStatus: SyncStatus.failed,
-            failureMessage: 'Skynet queue rejected this attempt. Retry is safe.',
+            failureMessage:
+                'Skynet queue rejected this attempt. Retry is safe.',
           );
     await box.put(note.id, next.toJson());
     return next;

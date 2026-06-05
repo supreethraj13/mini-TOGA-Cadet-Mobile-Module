@@ -26,26 +26,30 @@ class DashboardModel {
   final DashboardLogbook logbook;
 
   factory DashboardModel.fromJson(Map<String, dynamic> json) => DashboardModel(
-        cadetName: json['cadet_name'] as String,
-        course: json['course'] as String,
-        trainingStage: json['training_stage'] as String,
-        assignedFto: json['assigned_fto'] as String,
-        assignedInstructor: json['assigned_instructor'] as String,
-        overallStudyProgress: json['overall_study_progress'] as int,
-        upcomingFlight: UpcomingFlight.fromJson(Map<String, dynamic>.from(json['upcoming_flight'] as Map)),
-        logbook: DashboardLogbook.fromJson(Map<String, dynamic>.from(json['logbook'] as Map)),
-      );
+    cadetName: json['cadet_name'] as String,
+    course: json['course'] as String,
+    trainingStage: json['training_stage'] as String,
+    assignedFto: json['assigned_fto'] as String,
+    assignedInstructor: json['assigned_instructor'] as String,
+    overallStudyProgress: json['overall_study_progress'] as int,
+    upcomingFlight: UpcomingFlight.fromJson(
+      Map<String, dynamic>.from(json['upcoming_flight'] as Map),
+    ),
+    logbook: DashboardLogbook.fromJson(
+      Map<String, dynamic>.from(json['logbook'] as Map),
+    ),
+  );
 
   Map<String, dynamic> toJson() => {
-        'cadet_name': cadetName,
-        'course': course,
-        'training_stage': trainingStage,
-        'assigned_fto': assignedFto,
-        'assigned_instructor': assignedInstructor,
-        'overall_study_progress': overallStudyProgress,
-        'upcoming_flight': upcomingFlight.toJson(),
-        'logbook': logbook.toJson(),
-      };
+    'cadet_name': cadetName,
+    'course': course,
+    'training_stage': trainingStage,
+    'assigned_fto': assignedFto,
+    'assigned_instructor': assignedInstructor,
+    'overall_study_progress': overallStudyProgress,
+    'upcoming_flight': upcomingFlight.toJson(),
+    'logbook': logbook.toJson(),
+  };
 }
 
 class UpcomingFlight {
@@ -62,18 +66,18 @@ class UpcomingFlight {
   final String lesson;
 
   factory UpcomingFlight.fromJson(Map<String, dynamic> json) => UpcomingFlight(
-        aircraft: json['aircraft'] as String,
-        date: json['date'] as String,
-        time: json['time'] as String,
-        lesson: json['lesson'] as String,
-      );
+    aircraft: json['aircraft'] as String,
+    date: json['date'] as String,
+    time: json['time'] as String,
+    lesson: json['lesson'] as String,
+  );
 
   Map<String, dynamic> toJson() => {
-        'aircraft': aircraft,
-        'date': date,
-        'time': time,
-        'lesson': lesson,
-      };
+    'aircraft': aircraft,
+    'date': date,
+    'time': time,
+    'lesson': lesson,
+  };
 }
 
 class DashboardLogbook {
@@ -87,15 +91,16 @@ class DashboardLogbook {
   final double soloHours;
   final String lastFlight;
 
-  factory DashboardLogbook.fromJson(Map<String, dynamic> json) => DashboardLogbook(
+  factory DashboardLogbook.fromJson(Map<String, dynamic> json) =>
+      DashboardLogbook(
         totalHours: (json['total_hours'] as num).toDouble(),
         soloHours: (json['solo_hours'] as num).toDouble(),
         lastFlight: json['last_flight'] as String,
       );
 
   Map<String, dynamic> toJson() => {
-        'total_hours': totalHours,
-        'solo_hours': soloHours,
-        'last_flight': lastFlight,
-      };
+    'total_hours': totalHours,
+    'solo_hours': soloHours,
+    'last_flight': lastFlight,
+  };
 }

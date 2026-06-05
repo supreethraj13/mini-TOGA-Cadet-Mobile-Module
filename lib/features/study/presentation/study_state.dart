@@ -22,10 +22,12 @@ class StudyState extends Equatable {
   final String? error;
 
   List<StudySubject> get filteredSubjects => subjects.where((subject) {
-        final matchesQuery = subject.subject.toLowerCase().contains(query.toLowerCase());
-        final matchesFilter = filter == null || subject.status == filter;
-        return matchesQuery && matchesFilter;
-      }).toList();
+    final matchesQuery = subject.subject.toLowerCase().contains(
+      query.toLowerCase(),
+    );
+    final matchesFilter = filter == null || subject.status == filter;
+    return matchesQuery && matchesFilter;
+  }).toList();
 
   StudyState copyWith({
     StudyStatus? status,
@@ -49,5 +51,13 @@ class StudyState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, detailStatus, subjects, selectedSubject, query, filter, error];
+  List<Object?> get props => [
+    status,
+    detailStatus,
+    subjects,
+    selectedSubject,
+    query,
+    filter,
+    error,
+  ];
 }

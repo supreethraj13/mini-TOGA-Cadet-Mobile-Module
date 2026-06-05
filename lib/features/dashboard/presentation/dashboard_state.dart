@@ -3,7 +3,11 @@ part of 'dashboard_cubit.dart';
 enum DashboardStatus { initial, loading, success, failure }
 
 class DashboardState extends Equatable {
-  const DashboardState({this.status = DashboardStatus.initial, this.dashboard, this.error});
+  const DashboardState({
+    this.status = DashboardStatus.initial,
+    this.dashboard,
+    this.error,
+  });
 
   final DashboardStatus status;
   final DashboardModel? dashboard;

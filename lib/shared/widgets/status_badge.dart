@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class StatusBadge extends StatelessWidget {
-  const StatusBadge({required this.label, this.tone = BadgeTone.neutral, super.key});
+  const StatusBadge({
+    required this.label,
+    this.tone = BadgeTone.neutral,
+    super.key,
+  });
 
   final String label;
   final BadgeTone tone;
@@ -25,7 +29,11 @@ class StatusBadge extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Text(
           label,
-          style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 12),
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+          ),
         ),
       ),
     );

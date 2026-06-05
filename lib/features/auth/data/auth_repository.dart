@@ -8,8 +8,25 @@ class AuthRepository {
 
   final AuthService _service;
 
-  Future<({String token, CadetProfile profile})> login() async {
-    final response = await _service.loginAsCadet();
+  Future<List<CadetProfile>> fetchMockProfiles() async {
+    final items = await _service.fetchMockProfiles();
+    return items.map(CadetProfile.fromJson).toList();
+  }
+
+  Future<({String token, CadetProfile profile})> login({
+    required String profileId,
+    required String mode,
+    required String username,
+    required String password,
+    Map<String, dynamic>? profileDetails,
+  }) async {
+    final response = await _service.loginAsCadet(
+      profileId: profileId,
+      mode: mode,
+      username: username,
+      password: password,
+      profileDetails: profileDetails,
+    );
     if (response['success'] != true) {
       throw AppError('Unable to authenticate mock cadet.', code: 'auth_failed');
     }
@@ -31,7 +48,9 @@ class AuthRepository {
     if (token == null || rawProfile == null) return null;
     return (
       token: token,
-      profile: CadetProfile.fromJson(Map<String, dynamic>.from(rawProfile as Map)),
+      profile: CadetProfile.fromJson(
+        Map<String, dynamic>.from(rawProfile as Map),
+      ),
     );
   }
 
