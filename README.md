@@ -66,6 +66,5 @@ Then the APK is present in build/app/outputs/flutter-apk/app-release
 
 ## Improvements
 
-Add Dio interceptors, secure token storage, typed Hive adapters, background sync, richer widget tests, CI .
-# mini-TOGA-Cadet-Mobile-Module
-# mini-TOGA-Cadet-Mobile-Module
+Add Dio interceptors, secure token storage, typed Hive adapters, background sync, richer widget tests, CI.
+
